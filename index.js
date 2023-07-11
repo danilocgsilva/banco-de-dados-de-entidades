@@ -1,32 +1,32 @@
 import http from "http"
-
-const getDataFromApi = async () => {
-
-    const apiAddress = "https://www.4devs.com.br/ferramentas_online.php"
-
-    var form = new FormData();
-    form.append('acao', "gerar_pessoa")
-    form.append('sexo', 'I')
-    form.append('pontuacao', 'S')
-    form.append('txt_qtde', '1')
-
-    const responseFromApi = await fetch(
-        apiAddress,
-        {
-            method: "POST",
-            body: form
-        }
-    )
-
-    if (responseFromApi.ok) {
-        return await responseFromApi.json()
-    }
-
-    throw new Error("A bad thing happened...")
-}
+import buscarJson from "./src/buscarJson.js";
+import pessoaForm from "./src/pessoaForm.js"
+import empresaForm from "./src/empresaForm.js"
+import UrlErrada from "./src/UrlErrada.js"
 
 http.createServer(async (req, res) => {
-    res.writeHead(200, { 'Content-Type': 'application/json' });
-    const contentToResponde = await getDataFromApi()
-    res.end(JSON.stringify(contentToResponde));
+
+    try {
+        let form
+        if (req.url == "/empresa") {
+            form = empresaForm
+        } else if (req.url == "/pessoa") {
+            form = pessoaForm
+        } else {
+            throw new UrlErrada("Deve adicionar o caminho para dizer o que se deseja buscar como dados. Digite /empresa ou /pessoa no caminho.")
+        }
+    
+        const contentResults = await buscarJson(form)
+        
+        res.writeHead(200, { 'Content-Type': "application/json" });
+        res.end(contentResults.content);
+    } catch (e) {
+        if (e instanceof UrlErrada) {
+            res.writeHead(400, { 'Content-Type': "application/json" });
+            res.end(JSON.stringify({message: e.message}));
+        } else {
+            throw e
+        }
+    }
+
 }).listen(3000, "0.0.0.0");
