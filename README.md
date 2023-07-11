@@ -23,5 +23,5 @@ http://localhost:3000/pessoa
 Ou
 
 ```
-http://localhost:3000/pessoa
+http://localhost:3000/empresa
 ```
