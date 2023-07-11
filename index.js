@@ -13,8 +13,8 @@ const getDataFromApi = async () => {
     const responseFromApi = await fetch(
         apiAddress,
         {
-            method: verb,
-            body: "POST"
+            method: "POST",
+            body: form
         }
     )
 
