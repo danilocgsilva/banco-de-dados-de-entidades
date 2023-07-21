@@ -1,4 +1,5 @@
 import construirResultadoDaResposta from "./FormatoEmpresa/construirResultadoDaResposta.js"
+import ApiIndigestError from "./Errors/ApiIndigestError.js"
 
 const buscarJson = async (requestData) => {
 
@@ -30,8 +31,8 @@ const buscarJson = async (requestData) => {
             content: results
         }
     }
-
-    throw new Error("A bad thing happened...")
+    
+    throw new ApiIndigestError()
 }
 
 export default buscarJson

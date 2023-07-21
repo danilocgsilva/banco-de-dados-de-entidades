@@ -2,7 +2,8 @@ import http from "http"
 import buscarJson from "./src/buscarJson.js";
 import pessoaForm from "./src/FormatoPessoa/pessoaForm.js"
 import empresaForm from "./src/FormatoEmpresa/empresaForm.js"
-import UrlErrada from "./src/UrlErrada.js"
+import UrlErrada from "./src/Errors/UrlErrada.js"
+import ApiIndigestError from "./src/Errors/ApiIndigestError.js"
 import Input from "./src/Input.js";
 import FiltroCampos from "./src/FiltroCampos.js"
 import mysql from "mysql"
@@ -44,6 +45,9 @@ http.createServer(async (req, res) => {
     } catch (e) {
         if (e instanceof UrlErrada) {
             res.writeHead(400, { 'Content-Type': "application/json" });
+            res.end(JSON.stringify({ message: e.message }));
+        } else if (e instanceof ApiIndigestError) {
+            console.error("Idigest in the api. Ignoring and trying again...")
             res.end(JSON.stringify({ message: e.message }));
         } else {
             throw e
