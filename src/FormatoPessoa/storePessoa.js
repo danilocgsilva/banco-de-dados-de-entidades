@@ -1,3 +1,5 @@
+import DbIndigestError from "../Errors/DbIndigestError.js"
+
 const storePessoa = (content, dbConnection) => {
     const dataToInsert = {
         nome: content.nome,
@@ -26,7 +28,11 @@ const storePessoa = (content, dbConnection) => {
     }
 
     dbConnection.query('INSERT INTO pessoas SET ?', dataToInsert, function (error, results, fields) {
-        if (error) throw error
+        if (error instanceof DbIndigestError)  {
+            console.log("Indigest on database. Ignoring fetch data for this register.")
+        } else {
+            throw error
+        }
     })
 }
 
