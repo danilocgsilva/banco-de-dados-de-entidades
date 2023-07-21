@@ -9,6 +9,14 @@ import FiltroCampos from "./src/FiltroCampos.js"
 import mysql from "mysql"
 import storePessoa from "./src/FormatoPessoa/storePessoa.js";
 
+const dbConnection = await mysql.createConnection({
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
+    port: process.env.DB_PORT
+});
+
 http.createServer(async (req, res) => {
 
     try {
@@ -29,19 +37,12 @@ http.createServer(async (req, res) => {
 
         const finalContent = filtroCampos.buscaConteudo()
 
-        const dbConnection = mysql.createConnection({
-            host: process.env.DB_HOST,
-            user: process.env.DB_USER,
-            password: process.env.DB_PASSWORD,
-            database: process.env.DB_NAME,
-            port: process.env.DB_PORT
-        });
-        
         storePessoa(contentResults.content, dbConnection)
 
         res.end(
             JSON.stringify(finalContent, null, 4)
         );
+        console.log(`Successfully fetched and stored ${contentResults.content.nome}`)
     } catch (e) {
         if (e instanceof UrlErrada) {
             res.writeHead(400, { 'Content-Type': "application/json" });
